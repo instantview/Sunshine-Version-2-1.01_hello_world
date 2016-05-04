@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+
 
 public class MainActivity extends ActionBarActivity implements ForecastFragment.Callback {
 
@@ -52,6 +54,8 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
         ForecastFragment forecastFragment = ((ForecastFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_forecast));
         forecastFragment.setUseTodayLayout(!mTwoPane);
+
+        SunshineSyncAdapter.initializeSyncAdapter(this);
     }
 
     @Override
@@ -75,37 +79,11 @@ public class MainActivity extends ActionBarActivity implements ForecastFragment.
             return true;
         }
 
-        if (id == R.id.action_map) {
-            // this intent launches the map settings
-            openPreferredLocationInMap();
-            return (true);
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void openPreferredLocationInMap() {
-//        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-//        String location = sharedPrefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-
-        String location = Utility.getPreferredLocation(this);
-
-        // Using the URI scheme for showing a location found on a map.  This super-handy intent can is detailed in the "Common Intents"
-        // page of Android's developer site: http://developer.android.com/guide/components/intents-common.html#Maps
-
-        Uri geoLocation = Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q", location).build();
-
-        // show a location on a map - use the ACTION_VIEW action and specify the location information in the intent data
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(geoLocation);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-            //end of boilerplate code and add in LOG if action fails
-
-        } else {
-            Log.d(LOG_TAG, "Couldn't call " + location + ", no receiving apps installed!");
-        }
-    }
 
 
     @Override
